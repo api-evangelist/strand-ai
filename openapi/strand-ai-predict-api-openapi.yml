@@ -1,0 +1,165 @@
+openapi: 3.1.0
+info:
+  title: Strand AI Platform Jobs Predict API
+  version: v1
+  description: 'REST surface for uploading WSIs, submitting Lattice inference jobs, and streaming results. All endpoints require an `Authorization: Bearer sk-strand-...` header. Generate keys at `/settings/api-keys`.'
+servers:
+- url: https://app.strandai.com/api/v1
+  description: Production
+security:
+- ApiKey: []
+tags:
+- name: Predict
+paths:
+  /predict/estimate:
+    post:
+      summary: Estimate credit cost for a prediction
+      tags:
+      - Predict
+      operationId: estimatePrediction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - uploadId
+              - markers
+              properties:
+                uploadId:
+                  type: string
+                  format: uuid
+                markers:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+      responses:
+        '200':
+          description: Estimate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+        '409':
+          description: Upload missing dimensions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /predict:
+    post:
+      summary: Submit a prediction
+      description: Reserves credits atomically and enqueues preprocessing. Returns 202 + `jobId`. On insufficient balance returns 402 with rollback. On per-org concurrency cap returns 429 with `Retry-After`.
+      tags:
+      - Predict
+      operationId: submitPrediction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - uploadId
+              - markers
+              properties:
+                uploadId:
+                  type: string
+                  format: uuid
+                markers:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                model:
+                  type: string
+                  enum:
+                  - v0.4
+                  - v0.5
+                  description: 'Optional explicit Lattice version. `v0.4` is the 192-marker original; `v0.5` is the retrained 192-marker sibling and the current default. Both share GenePT embeddings — the marker vocabulary is identical between them. Omit to let the platform pick (currently `v0.5`). Legacy strings `"v10-fullpanel"` and `"v10-fullpanel-v2"` are still accepted on input and rewritten server-side to `"v0.4"` / `"v0.5"` respectively (with a `Warning: 299` response header); the legacy alias path is undocumented and will be removed on 2026-12-01. The `"v10"` alias resolved to the now-sunset v0.3 and is rejected with 400 `unknown_model`.'
+      responses:
+        '202':
+          description: Job accepted and credits reserved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Upload not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Per-org concurrent job cap exceeded
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Submission:
+      type: object
+      required:
+      - jobId
+      - reservedCredits
+      - status
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        reservedCredits:
+          type: integer
+        status:
+          type: string
+          enum:
+          - queued
+    Error:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        required:
+          type: integer
+          nullable: true
+    Estimate:
+      type: object
+      required:
+      - patchCount
+      - markerCount
+      - estimatedCredits
+      - orgBalance
+      properties:
+        patchCount:
+          type: integer
+        markerCount:
+          type: integer
+        estimatedCredits:
+          type: integer
+        orgBalance:
+          type: integer
+        orgPending:
+          type: integer
+  securitySchemes:
+    ApiKey:
+      type: http
+      scheme: bearer
+      bearerFormat: sk-strand-XXXXXXXXXXXXXXXXXXXXXXXX

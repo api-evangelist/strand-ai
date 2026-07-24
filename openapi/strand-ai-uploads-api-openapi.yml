@@ -1,0 +1,141 @@
+openapi: 3.1.0
+info:
+  title: Strand AI Platform Jobs Uploads API
+  version: v1
+  description: 'REST surface for uploading WSIs, submitting Lattice inference jobs, and streaming results. All endpoints require an `Authorization: Bearer sk-strand-...` header. Generate keys at `/settings/api-keys`.'
+servers:
+- url: https://app.strandai.com/api/v1
+  description: Production
+security:
+- ApiKey: []
+tags:
+- name: Uploads
+paths:
+  /uploads:
+    post:
+      summary: Initiate a resumable upload
+      tags:
+      - Uploads
+      operationId: createUpload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - filename
+              - fileSize
+              - contentType
+              properties:
+                filename:
+                  type: string
+                fileSize:
+                  type: integer
+                contentType:
+                  type: string
+                contentSha256:
+                  type: string
+                  pattern: ^[0-9a-f]{64}$
+                  description: 'Optional client-computed sha256 of the file bytes (64 lowercase hex chars). When supplied, the platform checks for an existing non-archived sample in the same org with the same hash; on a hit the response carries `existing: true` and the existing `uploadId` instead of minting a new signed URL.'
+      responses:
+        '200':
+          description: Resumable upload URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadCreated'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /uploads/{id}/complete:
+    post:
+      summary: Finalize a resumable upload
+      description: Marks the upload `ready` and writes width/height into metadata (used by credit estimates).
+      tags:
+      - Uploads
+      operationId: completeUpload
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Upload finalized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadComplete'
+        '404':
+          description: Upload not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    UploadComplete:
+      type: object
+      required:
+      - uploadId
+      - status
+      - widthPx
+      - heightPx
+      properties:
+        uploadId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - ready
+        widthPx:
+          type: integer
+        heightPx:
+          type: integer
+        dimensionsSource:
+          type: string
+          enum:
+          - sharp
+          - stub
+    UploadCreated:
+      type: object
+      required:
+      - uploadId
+      - gcsPath
+      properties:
+        uploadId:
+          type: string
+          format: uuid
+        uploadUrl:
+          type: string
+          description: 'Resumable upload URL — PUT slide bytes here. Omitted when `existing: true`.'
+        gcsPath:
+          type: string
+        existing:
+          type: boolean
+          description: True when `contentSha256` matched an existing non-archived sample in the same org. In that case `uploadUrl` is omitted and the byte upload should be skipped.
+    Error:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        required:
+          type: integer
+          nullable: true
+  securitySchemes:
+    ApiKey:
+      type: http
+      scheme: bearer
+      bearerFormat: sk-strand-XXXXXXXXXXXXXXXXXXXXXXXX
