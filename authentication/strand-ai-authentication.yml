@@ -1,0 +1,13 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/strand-ai-openapi-original.json
+summary:
+  types:
+  - http
+schemes:
+- name: ApiKey
+  type: http
+  scheme: bearer
+  bearerFormat: sk-strand-XXXXXXXXXXXXXXXXXXXXXXXX
+  sources:
+  - openapi/strand-ai-openapi-original.json

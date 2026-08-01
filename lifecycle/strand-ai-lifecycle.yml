@@ -1,0 +1,36 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.strandai.com/api/overview
+note: >-
+  No public status page was found for Strand AI, so no StatusPage pointer is wired. A deprecation
+  practice IS documented (model-version sunsetting with a Warning 299 header and a dated cutover),
+  so a Deprecation pointer is wired in apis.yml.
+versioning:
+  api_scheme: uri-path
+  api_current: v1
+  api_base: https://app.strandai.com/api/v1
+  model_track:
+    current_default: v0.5
+    dispatchable: [v0.4, v0.5]
+    sunset: [v0.3, v0.1]
+    note: >-
+      Lattice model versions are a separate track from the API version. v0.4 and v0.5 are both
+      192-marker models sharing GenePT embeddings; v0.5 is the current default. v0.3/v0.1 are
+      readable on historical jobs but not dispatchable.
+deprecation:
+  policy: >-
+    Legacy model aliases ("v10", "v10-fullpanel", "v10-fullpanel-v2") were accepted then sunset.
+    Deprecated inputs surfaced a Warning 299 response header; "v10" now returns 400 unknown_model.
+  sunset_header: false
+  warning_header: true
+  hard_cutover: '2026-06-03'
+  original_sunset_window: '2026-12-01'
+sla:
+  documented: false
+status_page: null
+data_retention:
+  expiration: opt-in (no automatic deletion)
+  trash_window_days: 7
+  permanent_delete: 7 days after expiry
+  quarantine_backstop: pre-de-identification uploads auto-deleted within 24h
+deprecated_operations: []

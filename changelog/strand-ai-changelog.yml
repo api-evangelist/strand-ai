@@ -1,0 +1,26 @@
+generated: '2026-07-21'
+method: searched
+source: https://github.com/Strand-AI/strand-sdk-python/blob/main/CHANGELOG.md
+note: >-
+  Strand AI's published dated changelog is the official Python SDK (strand-sdk) CHANGELOG, which
+  tracks Keep-a-Changelog + SemVer and reflects platform model-versioning changes. No separate
+  dated API changelog page was found; this SDK changelog is the closest published source of truth.
+scheme: semver
+target: strand-sdk (Python)
+current_version: 0.5.1
+entries:
+- version: 0.5.1
+  date: '2026-06-03'
+  breaking: true
+  highlights:
+  - Dropped legacy "v10"/"v10-fullpanel"/"v10-fullpanel-v2" alias-rewriting; legacy strings now
+    forwarded verbatim and rejected server-side with 400 unknown_model.
+  - JobStatus.model / PredictResult.model typed as Literal["v0.1","v0.4","v0.5"] | None.
+  - Sunset 35-marker base renumbered v0.3 -> v0.1 via DB migration.
+- version: 0.5.0
+  date: '2026-06-03'
+  breaking: true
+  highlights:
+  - ModelId is now Literal["v0.4","v0.5"] (canonical Lattice track); v10* strings accepted as
+    deprecated aliases emitting DeprecationWarning.
+  - JobStatus and PredictResult expose a model attribute.

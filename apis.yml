@@ -1,22 +1,164 @@
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 16
+  pass: local-v1
 aid: strand-ai
-name: Strand Ai
-description: Strand Ai is a company surfaced as a portfolio company of y-combinator and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+name: Strand AI
+description: >-
+  Strand AI (YC W26) builds multimodal foundation models for spatial biology that predict
+  missing patient bio-data from the data a patient already has. Its Lattice model turns a single
+  H&E-stained whole-slide image into per-pixel predictions for a panel of protein markers,
+  recovering spatial protein signal without running multiplex immunofluorescence. The Strand
+  Platform API is a production REST surface (https://app.strandai.com/api/v1) for uploading
+  whole-slide images, estimating and submitting Lattice inference jobs, streaming job status over
+  Server-Sent Events, and downloading OME-Zarr results as AnnData (Python) or SpatialExperiment
+  (R). Access is invite-only, authenticated with organization-scoped bearer API keys, and metered
+  in credits (1 credit per 224x224-px patch per marker). Official Python (strand-sdk) and R
+  (strandai) clients are published. Outputs are for research and hypothesis generation, not
+  clinical use.
 url: https://raw.githubusercontent.com/api-evangelist/strand-ai/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://avatars.githubusercontent.com/u/252118542?v=4
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - y-combinator
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: enriched
+x-tier-reason: has-public-api
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-apis: []
+- Artificial Intelligence
+- Machine Learning
+- Life Sciences
+- Spatial Biology
+- Bioinformatics
+- Drug Discovery
+- Foundation Models
+- Digital Pathology
+- Healthcare
+apis:
+- aid: strand-ai:strand-ai-jobs-api
+  name: Strand AI Jobs API
+  description: The Jobs API from Strand AI — 4 operation(s) for jobs.
+  humanURL: https://docs.strandai.com/api/overview
+  baseURL: https://app.strandai.com/api/v1
+  tags:
+  - Jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/strand-ai-jobs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.strandai.com/api/overview
+  - type: APIReference
+    url: https://docs.strandai.com/api-reference/endpoint/submitPrediction
+- aid: strand-ai:strand-ai-predict-api
+  name: Strand AI Predict API
+  description: The Predict API from Strand AI — 2 operation(s) for predict.
+  humanURL: https://docs.strandai.com/api/overview
+  baseURL: https://app.strandai.com/api/v1
+  tags:
+  - Predict
+  properties:
+  - type: OpenAPI
+    url: openapi/strand-ai-predict-api-openapi.yml
+  - type: Documentation
+    url: https://docs.strandai.com/api/overview
+  - type: APIReference
+    url: https://docs.strandai.com/api-reference/endpoint/submitPrediction
+- aid: strand-ai:strand-ai-samples-api
+  name: Strand AI Samples API
+  description: The Samples API from Strand AI — 3 operation(s) for samples.
+  humanURL: https://docs.strandai.com/api/overview
+  baseURL: https://app.strandai.com/api/v1
+  tags:
+  - Samples
+  properties:
+  - type: OpenAPI
+    url: openapi/strand-ai-samples-api-openapi.yml
+  - type: Documentation
+    url: https://docs.strandai.com/api/overview
+  - type: APIReference
+    url: https://docs.strandai.com/api-reference/endpoint/submitPrediction
+- aid: strand-ai:strand-ai-uploads-api
+  name: Strand AI Uploads API
+  description: The Uploads API from Strand AI — 2 operation(s) for uploads.
+  humanURL: https://docs.strandai.com/api/overview
+  baseURL: https://app.strandai.com/api/v1
+  tags:
+  - Uploads
+  properties:
+  - type: OpenAPI
+    url: openapi/strand-ai-uploads-api-openapi.yml
+  - type: Documentation
+    url: https://docs.strandai.com/api/overview
+  - type: APIReference
+    url: https://docs.strandai.com/api-reference/endpoint/submitPrediction
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+common:
+- type: DeveloperPortal
+  url: https://docs.strandai.com
+- type: Documentation
+  url: https://docs.strandai.com/introduction
+- type: APIReference
+  url: https://docs.strandai.com/api-reference/openapi.json
+- type: GettingStarted
+  url: https://docs.strandai.com/quickstart
+- type: Pricing
+  url: https://docs.strandai.com/pricing
+- type: SignUp
+  url: https://app.strandai.com/sign-in?requestAccess
+- type: GitHubOrganization
+  url: https://github.com/Strand-AI
+- type: Website
+  url: https://strandai.com
+- type: LLMsTxt
+  url: llms/strand-ai-llms.txt
+- type: Authentication
+  url: authentication/strand-ai-authentication.yml
+- type: DomainSecurity
+  url: security/strand-ai-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/strand-ai-agentic-access.yml
+- type: Packages
+  url: packages/strand-ai-packages.yml
+- type: SDKs
+  url: packages/strand-ai-packages.yml
+- type: MCPServer
+  url: mcp/strand-ai-mcp.yml
+- type: Overlay
+  url: overlays/strand-ai-platform-overlay.yaml
+- type: Conformance
+  url: conformance/strand-ai-conformance.yml
+- type: ErrorCatalog
+  url: errors/strand-ai-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/strand-ai-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/strand-ai-lifecycle.yml
+- type: Conventions
+  url: conventions/strand-ai-conventions.yml
+- type: ChangeLog
+  url: changelog/strand-ai-changelog.yml
+- type: DataModel
+  url: data-model/strand-ai-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml

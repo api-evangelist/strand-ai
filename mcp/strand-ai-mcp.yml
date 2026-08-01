@@ -1,0 +1,46 @@
+generated: '2026-07-21'
+method: derived
+status: candidate
+source: openapi/strand-ai-openapi-original.json
+note: >-
+  Strand AI publishes no official hosted/remote MCP server for the Strand Platform API (the org's
+  MCP repos — paper-intelligence, slack-notifier-mcp, lambda-cli — are internal developer tooling,
+  not a wrapper for this API). Below is a CANDIDATE tool list derived one-to-one from the OpenAPI
+  operations, offered as a starting point for an agent-native surface.
+server:
+  name: strand-ai
+  transport: http
+tools:
+- name: create_upload
+  description: Initiate a resumable upload for a whole-slide image
+  source_operation: openapi/strand-ai-openapi-original.json#createUpload
+- name: complete_upload
+  description: Finalize a resumable upload and record slide dimensions
+  source_operation: openapi/strand-ai-openapi-original.json#completeUpload
+- name: estimate_prediction
+  description: Estimate the credit cost of a marker prediction without reserving credits
+  source_operation: openapi/strand-ai-openapi-original.json#estimatePrediction
+- name: submit_prediction
+  description: Reserve credits and enqueue a Lattice inference job
+  source_operation: openapi/strand-ai-openapi-original.json#submitPrediction
+- name: get_job
+  description: Get the status of an inference job
+  source_operation: openapi/strand-ai-openapi-original.json#getJob
+- name: stream_job
+  description: Stream job status snapshots over Server-Sent Events
+  source_operation: openapi/strand-ai-openapi-original.json#streamJob
+- name: get_job_results
+  description: Get a signed download URL for OME-Zarr results
+  source_operation: openapi/strand-ai-openapi-original.json#getJobResults
+- name: get_job_result_file
+  description: Stream a single result file from the OME-Zarr store (API-key authenticated)
+  source_operation: openapi/strand-ai-openapi-original.json#getJobResultFile
+- name: set_sample_expiration
+  description: Set, clear, or disable expiration for a single sample
+  source_operation: openapi/strand-ai-openapi-original.json#setSampleExpiration
+- name: set_samples_expiration_bulk
+  description: Set expiration for up to 500 samples in one all-or-nothing call
+  source_operation: openapi/strand-ai-openapi-original.json#setSamplesExpirationBulk
+- name: restore_sample
+  description: Restore a sample from Trash within the 7-day recovery window
+  source_operation: openapi/strand-ai-openapi-original.json#restoreSample

@@ -1,0 +1,40 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/strand-ai-openapi-original.json
+note: >-
+  Standards conformance derived from the OpenAPI and docs. Strand AI publishes no formal
+  compliance certifications (no SOC 2 / ISO 27001 / HIPAA claim on the security-data-handling
+  page as of this pass), so no Compliance pointer is wired in apis.yml.
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: spec declares openapi 3.1.0
+- id: oauth2
+  conforms: false
+  evidence: auth is a static bearer API key (http bearer), no oauth2 flows
+- id: oidc
+  conforms: false
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: errors use a custom {error, message, required} envelope, not application/problem+json
+- id: rfc8594-sunset-header
+  conforms: partial
+  evidence: legacy model aliases return a Warning 299 header with a documented sunset date
+- id: sse-server-sent-events
+  conforms: true
+  evidence: GET /jobs/{id}/stream returns text/event-stream with 15s heartbeats
+- id: rfc6750-bearer-token
+  conforms: true
+  evidence: Authorization Bearer sk-strand-... token per OpenAPI securityScheme
+- id: rate-limit-retry-after
+  conforms: true
+  evidence: 429 responses carry a Retry-After header (seconds)
+- id: ome-zarr
+  conforms: true
+  evidence: results are served as an OME-Zarr store (zarr.json tree, per-marker channels)
+- id: pagination
+  conforms: false
+  evidence: no list/collection endpoints with pagination in the current surface
+- id: idempotency-key
+  conforms: false
+  evidence: no Idempotency-Key header; uploads instead de-duplicate on client-supplied contentSha256

@@ -1,0 +1,12 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/strand-ai-openapi-original.json
+skills:
+- file: strand-ai-predict-markers.md
+  name: Predict protein markers from an H&E slide
+  api: openapi/strand-ai-openapi-original.json
+  operations: [createUpload, completeUpload, estimatePrediction, submitPrediction, streamJob, getJob, getJobResults, getJobResultFile]
+- file: strand-ai-manage-retention.md
+  name: Manage sample retention and recovery
+  api: openapi/strand-ai-openapi-original.json
+  operations: [setSampleExpiration, setSamplesExpirationBulk, restoreSample]

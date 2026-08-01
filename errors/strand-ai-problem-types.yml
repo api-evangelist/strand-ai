@@ -1,0 +1,50 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/strand-ai-openapi-original.json
+format: strand-error-envelope
+note: >-
+  Errors are NOT RFC 9457 problem+json. The Strand Platform API returns a JSON envelope with
+  fields {error (string code), message (string), required (integer, optional — set on
+  credit-related errors)}. Example: {"error":"insufficient_credits","message":"Org has 120
+  credits; this job requires 450.","required":450}. Problems below are derived from the OpenAPI
+  4xx/5xx responses.
+envelope:
+  fields:
+  - {name: error, type: string, description: machine-readable error code}
+  - {name: message, type: string, description: human-readable description}
+  - {name: required, type: integer, nullable: true, description: credits required (credit errors only)}
+problems:
+- status: 401
+  code: unauthorized
+  title: Missing or invalid API key
+  source_operations: [createUpload, setSampleExpiration, setSamplesExpirationBulk, restoreSample]
+- status: 402
+  code: insufficient_credits
+  title: Insufficient credits to reserve the job
+  remediation: Call estimatePrediction first; top up the org balance, then resubmit.
+  source_operations: [submitPrediction]
+- status: 403
+  code: forbidden
+  title: Not allowed for this sample / sample not in the API key's org
+  source_operations: [setSampleExpiration, setSamplesExpirationBulk, restoreSample]
+- status: 404
+  code: not_found
+  title: Resource (upload, job, sample, or result file) not found
+  source_operations: [completeUpload, getJob, setSampleExpiration, restoreSample, getJobResultFile]
+- status: 409
+  code: conflict
+  title: Upload missing dimensions, upload not ready, or job not completed
+  source_operations: [estimatePrediction, submitPrediction, getJobResults, getJobResultFile]
+- status: 412
+  code: precondition_failed
+  title: Sample is not archived (cannot restore)
+  source_operations: [restoreSample]
+- status: 422
+  code: invalid_input
+  title: Invalid expiration input
+  source_operations: [setSampleExpiration, setSamplesExpirationBulk]
+- status: 429
+  code: rate_limited
+  title: Per-org concurrent job cap exceeded
+  remediation: Honor the Retry-After header (seconds) before retrying submitPrediction.
+  source_operations: [submitPrediction]

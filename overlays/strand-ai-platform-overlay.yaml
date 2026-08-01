@@ -1,0 +1,30 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Strand Platform API
+  version: 1.0.0
+extends: openapi/strand-ai-openapi-original.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-enriched: '2026-07-21'
+    x-api-evangelist-tags:
+    - Spatial Biology
+    - Digital Pathology
+    - Machine Learning
+    - Foundation Models
+    x-authentication: authentication/strand-ai-authentication.yml
+    x-error-catalog: errors/strand-ai-problem-types.yml
+    x-conventions: conventions/strand-ai-conventions.yml
+    x-lifecycle: lifecycle/strand-ai-lifecycle.yml
+- target: $.info
+  update:
+    x-error-envelope: >-
+      Errors use a Strand-specific JSON envelope {error, message, required?}, not RFC 9457
+      problem+json. See errors/strand-ai-problem-types.yml.
+- target: $.paths['/predict'].post
+  update:
+    x-agentic-consequence: physical
+    x-agentic-note: >-
+      submitPrediction atomically reserves credits (billable). Estimate first with
+      estimatePrediction; a 402 signals insufficient balance, a 429 with Retry-After signals the
+      per-org concurrency cap.

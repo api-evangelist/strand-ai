@@ -1,0 +1,28 @@
+# Strand AI
+
+## Docs
+
+- [Complete upload](https://docs.strandai.com/api-reference/endpoint/completeUpload.md): Marks the upload `ready` and writes width/height into metadata (used by credit estimates).
+- [Initiate upload](https://docs.strandai.com/api-reference/endpoint/createUpload.md): Initiate a resumable upload by registering an H&E slide's filename, size, and content type, and receive a signed GCS URL to PUT the slide bytes to.
+- [Estimate cost](https://docs.strandai.com/api-reference/endpoint/estimatePrediction.md): Calculate the exact credit cost of a prediction from an upload's dimensions and requested markers, with no credit reservation against your org balance.
+- [Get job](https://docs.strandai.com/api-reference/endpoint/getJob.md): Fetch a snapshot of a prediction job's status, progress, reserved credits, and result path. Useful for polling clients that do not consume the SSE stream.
+- [Download result file](https://docs.strandai.com/api-reference/endpoint/getJobResultFile.md): Proxies a single file from the OME-Zarr result store. `path` is the path within the zarr store (e.g. `zarr.json`, `CD3/zarr.json`, `CD3/c/0/0/0`). Authenticated via the same bearer API key as the rest of `/api/v1/`; org-scoped to the job. Use this when walking the zarr tree from a client that does n…
+- [Get results URL](https://docs.strandai.com/api-reference/endpoint/getJobResults.md): Returns a signed GCS URL for the OME-Zarr root metadata (`zarr.json`) plus the `resultBasePath` of the zarr store. Useful for clients that already have GCS credentials. SDK clients should generally prefer `GET /jobs/{id}/results/files/{path}` (API-key authenticated) for walking the tree.
+- [Restore sample](https://docs.strandai.com/api-reference/endpoint/restoreSample.md): Available within the 7-day Trash window. Brings the sample back to the active list and extends its expiration so it isn't immediately re-trashed. Same permission gate as the expiration endpoints.
+- [Set sample expiration](https://docs.strandai.com/api-reference/endpoint/setSampleExpiration.md): Set a sample to expire on a specific date, set it to never expire, or clear any custom expiration and follow the org default. Caller must be the sample's creator, an org owner/admin, or a Strand admin.
+- [Set sample expiration (bulk)](https://docs.strandai.com/api-reference/endpoint/setSamplesExpirationBulk.md): All-or-nothing: if any sample fails the permission gate the whole call is rejected before any writes. Max 500 IDs per call.
+- [Stream job (SSE)](https://docs.strandai.com/api-reference/endpoint/streamJob.md): Server-Sent Events stream emitting JSON snapshots of `{status, progress, resultGcsPath}` on each pg_notify. Keep-alive heartbeats every 15s. Closes on terminal status.
+- [Submit prediction](https://docs.strandai.com/api-reference/endpoint/submitPrediction.md): Reserves credits atomically and enqueues preprocessing. Returns 202 + `jobId`. On insufficient balance returns 402 with rollback. On per-org concurrency cap returns 429 with `Retry-After`.
+- [REST API overview](https://docs.strandai.com/api/overview.md): Reference for the Strand AI REST API: base URL, bearer authentication, the four-step prediction lifecycle, error model, and per-org concurrency limits.
+- [Sample expiration](https://docs.strandai.com/expiration.md): Set when samples expire, restore samples from Trash within 7 days, and override the org default per sample.
+- [Welcome to Strand AI](https://docs.strandai.com/introduction.md): Strand AI predicts spatial protein marker channels from H&E whole-slide images using Lattice, with no antibody panel, multiplex IF, or extra slide required.
+- [Supported markers](https://docs.strandai.com/markers/index.md): Browse the 52 protein markers Lattice predicts from H&E today, grouped by immune lineage, checkpoint, stromal, and tumor biology, with model versions.
+- [Pricing & credits](https://docs.strandai.com/pricing.md): Learn how Strand AI bills predictions in credits per patch and marker, estimate cost from slide dimensions, and reserve credits before submitting jobs.
+- [Quickstart](https://docs.strandai.com/quickstart.md): Sign in, mint an API key, install the Python or R SDK, and submit your first H&E whole-slide prediction on the Strand AI platform in five minutes.
+- [Python SDK](https://docs.strandai.com/sdks/python.md): Install the Strand AI Python SDK, configure an API key, upload H&E slides, submit marker predictions, and stream results as AnnData for analysis.
+- [R SDK](https://docs.strandai.com/sdks/r.md): Install the strandai R SDK, configure an API key, upload H&E slides, submit marker predictions, and load results as a SpatialExperiment for Bioconductor.
+- [Security & data handling](https://docs.strandai.com/security-data-handling.md): How Strand AI stores, encrypts, retains, and deletes your data, and our commitment never to train on it without your opt-in.
+
+## OpenAPI Specs
+
+- [openapi](https://docs.strandai.com/api-reference/openapi.json)

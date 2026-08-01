@@ -1,0 +1,29 @@
+generated: '2026-07-21'
+method: searched
+source: probe of /.well-known/ on Strand AI hosts
+note: >-
+  No /.well-known/ discovery documents are published on any Strand AI host. All probes returned
+  404. Recorded here for provenance; no WellKnown/SecurityTxt pointer is wired in apis.yml because
+  no catalog exists. Absence is valid, expected data.
+hosts:
+- host: https://app.strandai.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+- host: https://docs.strandai.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+- host: https://strandai.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}

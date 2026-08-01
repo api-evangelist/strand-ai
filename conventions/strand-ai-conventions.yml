@@ -1,0 +1,54 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.strandai.com/api/overview
+note: >-
+  Cross-cutting request/response semantics for the Strand Platform API, from the docs and OpenAPI.
+  No Idempotency pointer is wired: the API documents no Idempotency-Key header. It DOES provide a
+  content-addressed upload de-duplication mechanism (see deduplication below), which is safe-retry
+  friendly but is not a general idempotency-key contract, so it is recorded honestly here rather
+  than claimed as Idempotency.
+authentication:
+  style: bearer
+  header: 'Authorization: Bearer sk-strand-...'
+  scope: organization
+  ref: authentication/strand-ai-authentication.yml
+deduplication:
+  mechanism: content-hash
+  field: contentSha256
+  behavior: >-
+    createUpload accepts an optional client-computed sha256 of the file bytes. On a hit against an
+    existing non-archived sample in the same org, the response carries existing:true and reuses the
+    existing uploadId (uploadUrl omitted, byte upload skipped).
+pagination:
+  supported: false
+  note: no list/collection endpoints in the current surface
+versioning:
+  style: uri-path
+  current: v1
+  ref: lifecycle/strand-ai-lifecycle.yml
+error_envelope:
+  format: strand-error-envelope
+  shape: '{error, message, required?}'
+  ref: errors/strand-ai-problem-types.yml
+rate_limit_signaling:
+  status: 429
+  header: Retry-After
+  unit: seconds
+  scope: per-org concurrent inference jobs (soft-enforced)
+streaming:
+  style: server-sent-events
+  operation: streamJob
+  content_type: text/event-stream
+  heartbeat_seconds: 15
+  payload: '{status, progress, resultGcsPath} on each pg_notify; closes on terminal status'
+metering:
+  unit: credit
+  formula: ceil(W/224) * ceil(H/224) patches * number of markers = credits
+  estimate_operation: estimatePrediction
+  reservation: credits reserved atomically at submitPrediction; refunded on failed jobs
+results_format:
+  container: OME-Zarr
+  access: >-
+    getJobResults returns a signed GCS URL to the zarr.json root; getJobResultFile proxies
+    individual files via the bearer API key for clients without GCS credentials.
+  bindings: AnnData (Python SDK), SpatialExperiment (R SDK)

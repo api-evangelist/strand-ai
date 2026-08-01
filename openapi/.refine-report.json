@@ -1,0 +1,20 @@
+{
+  "provider": "strand-ai",
+  "sources": [
+    "strand-ai-jobs-api-openapi.yml",
+    "strand-ai-predict-api-openapi.yml",
+    "strand-ai-samples-api-openapi.yml",
+    "strand-ai-uploads-api-openapi.yml"
+  ],
+  "outputs": [
+    "strand-ai-jobs-api-openapi.yml",
+    "strand-ai-predict-api-openapi.yml",
+    "strand-ai-samples-api-openapi.yml",
+    "strand-ai-uploads-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

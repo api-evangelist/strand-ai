@@ -1,0 +1,1028 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Strand AI Platform API",
+    "version": "v1",
+    "description": "REST surface for uploading WSIs, submitting Lattice inference jobs, and streaming results. All endpoints require an `Authorization: Bearer sk-strand-...` header. Generate keys at `/settings/api-keys`."
+  },
+  "servers": [
+    {
+      "url": "https://app.strandai.com/api/v1",
+      "description": "Production"
+    }
+  ],
+  "security": [
+    {
+      "ApiKey": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "sk-strand-XXXXXXXXXXXXXXXXXXXXXXXX"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "message"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "required": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "UploadCreated": {
+        "type": "object",
+        "required": [
+          "uploadId",
+          "gcsPath"
+        ],
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "uploadUrl": {
+            "type": "string",
+            "description": "Resumable upload URL — PUT slide bytes here. Omitted when `existing: true`."
+          },
+          "gcsPath": {
+            "type": "string"
+          },
+          "existing": {
+            "type": "boolean",
+            "description": "True when `contentSha256` matched an existing non-archived sample in the same org. In that case `uploadUrl` is omitted and the byte upload should be skipped."
+          }
+        }
+      },
+      "UploadComplete": {
+        "type": "object",
+        "required": [
+          "uploadId",
+          "status",
+          "widthPx",
+          "heightPx"
+        ],
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready"
+            ]
+          },
+          "widthPx": {
+            "type": "integer"
+          },
+          "heightPx": {
+            "type": "integer"
+          },
+          "dimensionsSource": {
+            "type": "string",
+            "enum": [
+              "sharp",
+              "stub"
+            ]
+          }
+        }
+      },
+      "Estimate": {
+        "type": "object",
+        "required": [
+          "patchCount",
+          "markerCount",
+          "estimatedCredits",
+          "orgBalance"
+        ],
+        "properties": {
+          "patchCount": {
+            "type": "integer"
+          },
+          "markerCount": {
+            "type": "integer"
+          },
+          "estimatedCredits": {
+            "type": "integer"
+          },
+          "orgBalance": {
+            "type": "integer"
+          },
+          "orgPending": {
+            "type": "integer"
+          }
+        }
+      },
+      "Submission": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "reservedCredits",
+          "status"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reservedCredits": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued"
+            ]
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "markers"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true
+          },
+          "reservedCredits": {
+            "type": "integer",
+            "nullable": true
+          },
+          "markers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "model": {
+            "type": "string",
+            "nullable": true,
+            "description": "Canonical Lattice version the job ran under (e.g. `\"v0.4\"`, `\"v0.5\"`). Always a `v0.X` label — the platform normalizes legacy aliases (`\"v10-fullpanel\"` → `\"v0.4\"`, `\"v10-fullpanel-v2\"` → `\"v0.5\"`) before persisting. Historical jobs may surface `\"v0.3\"` (sunset; readable but not dispatchable). `null` only on very old rows that predate the field."
+          },
+          "metadata": {
+            "type": "object",
+            "nullable": true,
+            "description": "Free-form job metadata. SDK-relevant fields include `modal.endpoint_url` (the Modal URL the dispatcher hit) and `modal.model` (mirror of the top-level `model`).",
+            "properties": {
+              "modal": {
+                "type": "object",
+                "properties": {
+                  "endpoint_url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "model": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "resultsAvailable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Results": {
+        "type": "object",
+        "required": [
+          "resultUrl",
+          "expiresAt"
+        ],
+        "properties": {
+          "resultUrl": {
+            "type": "string"
+          },
+          "resultBasePath": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ExpirationUpdate": {
+        "type": "object",
+        "description": "Provide exactly one of `expiresAt`, `neverExpire: true`, or `useOrgDefault: true`. `neverExpire: true` is sugar for `expiresAt: null` (custom). `useOrgDefault: true` clears the custom expiration and follows the org's default policy.",
+        "properties": {
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "neverExpire": {
+            "type": "boolean"
+          },
+          "useOrgDefault": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      },
+      "Sample": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "expiresAtSource": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "org_default",
+              "custom",
+              null
+            ]
+          },
+          "retentionChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "retentionChangedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/uploads": {
+      "post": {
+        "summary": "Initiate a resumable upload",
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "createUpload",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "filename",
+                  "fileSize",
+                  "contentType"
+                ],
+                "properties": {
+                  "filename": {
+                    "type": "string"
+                  },
+                  "fileSize": {
+                    "type": "integer"
+                  },
+                  "contentType": {
+                    "type": "string"
+                  },
+                  "contentSha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Optional client-computed sha256 of the file bytes (64 lowercase hex chars). When supplied, the platform checks for an existing non-archived sample in the same org with the same hash; on a hit the response carries `existing: true` and the existing `uploadId` instead of minting a new signed URL."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resumable upload URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadCreated"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/{id}/complete": {
+      "post": {
+        "summary": "Finalize a resumable upload",
+        "description": "Marks the upload `ready` and writes width/height into metadata (used by credit estimates).",
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "completeUpload",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload finalized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadComplete"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Upload not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/estimate": {
+      "post": {
+        "summary": "Estimate credit cost for a prediction",
+        "tags": [
+          "Predict"
+        ],
+        "operationId": "estimatePrediction",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "uploadId",
+                  "markers"
+                ],
+                "properties": {
+                  "uploadId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "markers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Estimate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Estimate"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Upload missing dimensions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict": {
+      "post": {
+        "summary": "Submit a prediction",
+        "description": "Reserves credits atomically and enqueues preprocessing. Returns 202 + `jobId`. On insufficient balance returns 402 with rollback. On per-org concurrency cap returns 429 with `Retry-After`.",
+        "tags": [
+          "Predict"
+        ],
+        "operationId": "submitPrediction",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "uploadId",
+                  "markers"
+                ],
+                "properties": {
+                  "uploadId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "markers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1
+                  },
+                  "model": {
+                    "type": "string",
+                    "enum": [
+                      "v0.4",
+                      "v0.5"
+                    ],
+                    "description": "Optional explicit Lattice version. `v0.4` is the 192-marker original; `v0.5` is the retrained 192-marker sibling and the current default. Both share GenePT embeddings — the marker vocabulary is identical between them. Omit to let the platform pick (currently `v0.5`). Legacy strings `\"v10-fullpanel\"` and `\"v10-fullpanel-v2\"` are still accepted on input and rewritten server-side to `\"v0.4\"` / `\"v0.5\"` respectively (with a `Warning: 299` response header); the legacy alias path is undocumented and will be removed on 2026-12-01. The `\"v10\"` alias resolved to the now-sunset v0.3 and is rejected with 400 `unknown_model`."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job accepted and credits reserved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Submission"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient credits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Upload not ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-org concurrent job cap exceeded",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Seconds to wait before retrying"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}": {
+      "get": {
+        "summary": "Get job status",
+        "tags": [
+          "Jobs"
+        ],
+        "operationId": "getJob",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}/stream": {
+      "get": {
+        "summary": "Stream job status (SSE)",
+        "description": "Server-Sent Events stream emitting JSON snapshots of `{status, progress, resultGcsPath}` on each pg_notify. Keep-alive heartbeats every 15s. Closes on terminal status.",
+        "tags": [
+          "Jobs"
+        ],
+        "operationId": "streamJob",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "text/event-stream",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}/results": {
+      "get": {
+        "summary": "Get signed download URL for results",
+        "description": "Returns a signed GCS URL for the OME-Zarr root metadata (`zarr.json`) plus the `resultBasePath` of the zarr store. Useful for clients that already have GCS credentials. SDK clients should generally prefer `GET /jobs/{id}/results/files/{path}` (API-key authenticated) for walking the tree.",
+        "tags": [
+          "Jobs"
+        ],
+        "operationId": "getJobResults",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signed URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Results"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Job has not completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/samples/{id}/expiration": {
+      "patch": {
+        "summary": "Set sample expiration",
+        "description": "Set a sample to expire on a specific date, set it to never expire, or clear any custom expiration and follow the org default. Caller must be the sample's creator, an org owner/admin, or a Strand admin.",
+        "tags": [
+          "Samples"
+        ],
+        "operationId": "setSampleExpiration",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpirationUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated sample",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sample"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not allowed for this sample",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sample not found in this org",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/samples/expiration": {
+      "patch": {
+        "summary": "Set sample expiration (bulk)",
+        "description": "All-or-nothing: if any sample fails the permission gate the whole call is rejected before any writes. Max 500 IDs per call.",
+        "tags": [
+          "Samples"
+        ],
+        "operationId": "setSamplesExpirationBulk",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExpirationUpdate"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "sampleIds"
+                    ],
+                    "properties": {
+                      "sampleIds": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "format": "uuid"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bulk update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "updated",
+                    "batchId"
+                  ],
+                  "properties": {
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "batchId": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "One or more samples are not in the API key's org",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/samples/{id}/restore": {
+      "post": {
+        "summary": "Restore a sample from Trash",
+        "description": "Available within the 7-day Trash window. Brings the sample back to the active list and extends its expiration so it isn't immediately re-trashed. Same permission gate as the expiration endpoints.",
+        "tags": [
+          "Samples"
+        ],
+        "operationId": "restoreSample",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restored sample",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "archivedAt": {
+                      "type": "null"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not allowed for this sample",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sample not found in this org",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Sample is not archived",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}/results/files/{path}": {
+      "get": {
+        "summary": "Stream a single result file (API-key authenticated)",
+        "description": "Proxies a single file from the OME-Zarr result store. `path` is the path within the zarr store (e.g. `zarr.json`, `CD3/zarr.json`, `CD3/c/0/0/0`). Authenticated via the same bearer API key as the rest of `/api/v1/`; org-scoped to the job. Use this when walking the zarr tree from a client that does not have direct GCS credentials.",
+        "tags": [
+          "Jobs"
+        ],
+        "operationId": "getJobResultFile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "description": "Path within the zarr store; slashes are not URL-encoded.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File bytes (binary for chunks, JSON for metadata).",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job or file not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Job has not completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

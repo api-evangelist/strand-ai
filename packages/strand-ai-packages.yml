@@ -1,0 +1,27 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.strandai.com/sdks/python
+packages:
+- language: python
+  registry: pypi
+  name: strand-sdk
+  version: 0.5.1
+  url: https://pypi.org/project/strand-sdk/
+  install: pip install strand-sdk
+  repository: https://github.com/Strand-AI/strand-sdk-python
+  import: strand
+  official: true
+  notes: >-
+    Official Python client for the Strand Platform API (H&E -> multiplex protein inference).
+    Optional extras: pip install "strand-sdk[anndata]" for AnnData/bioinformatics support.
+    Requires Python 3.10+.
+- language: r
+  registry: r-universe
+  name: strandai
+  url: https://github.com/Strand-AI/strand-sdk-r
+  install: install.packages("strandai", repos = c("https://strand-ai.r-universe.dev", "https://cloud.r-project.org"))
+  repository: https://github.com/Strand-AI/strand-sdk-r
+  official: true
+  notes: >-
+    Official R client. Bleeding edge via remotes::install_github("Strand-AI/strand-sdk-r").
+    Functions prefixed strand_*; integrates with Bioconductor SpatialExperiment.

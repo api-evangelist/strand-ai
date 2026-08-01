@@ -1,0 +1,45 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/strand-ai-openapi-original.json
+note: >-
+  Entity-relationship graph derived from the OpenAPI schemas and operation flow. Ids are UUIDs
+  (no documented id-prefixes). The core flow: an Upload becomes a ready Sample, a Sample feeds a
+  prediction Job, and a completed Job produces OME-Zarr Results.
+entities:
+- name: Upload
+  id: uploadId (uuid)
+  fields: [gcsPath, uploadUrl, existing, status, widthPx, heightPx, dimensionsSource]
+  note: resumable upload of a whole-slide image; de-duplicated on contentSha256
+- name: Sample
+  id: id (uuid)
+  fields: [expiresAt, expiresAtSource, retentionChangedAt, retentionChangedBy, batchId]
+  note: a stored, ready slide; subject to expiration/retention and Trash restore
+- name: Job
+  id: id (uuid)
+  fields: [status, progress, reservedCredits, markers, model, metadata, createdAt, startedAt, completedAt, errorMessage, resultsAvailable]
+  note: a Lattice inference job over a Sample for a set of markers
+- name: Results
+  id: resultUrl
+  fields: [resultBasePath, expiresAt]
+  note: signed OME-Zarr store output of a completed Job
+relationships:
+- from: Upload
+  to: Sample
+  type: has_one
+  via: uploadId
+  note: a finalized (ready) Upload materializes as a Sample
+- from: Job
+  to: Sample
+  type: belongs_to
+  via: uploadId
+  note: submitPrediction references the uploadId of a ready Sample
+- from: Job
+  to: Results
+  type: has_one
+  via: jobId
+  note: a completed Job exposes one OME-Zarr Results store (resultsAvailable)
+- from: Sample
+  to: Sample
+  type: has_many
+  via: batchId
+  note: bulk expiration groups samples under a shared batchId
