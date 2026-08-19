@@ -1,0 +1,57 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Strand AI Platform Jobs Uploads API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Uploads",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Initiate a resumable upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.strandai.com/api/v1/uploads",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Initiate a resumable upload"
+        },
+        {
+          "info": {
+            "name": "Finalize a resumable upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.strandai.com/api/v1/uploads/:id/complete",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Marks the upload `ready` and writes width/height into metadata (used by credit estimates)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

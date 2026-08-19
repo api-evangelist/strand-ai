@@ -1,0 +1,54 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Strand AI Platform Jobs Predict API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Predict",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Estimate credit cost for a prediction",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.strandai.com/api/v1/predict/estimate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Estimate credit cost for a prediction"
+        },
+        {
+          "info": {
+            "name": "Submit a prediction",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.strandai.com/api/v1/predict",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reserves credits atomically and enqueues preprocessing. Returns 202 + `jobId`. On insufficient balance returns 402 with rollback. On per-org concurrency cap returns 429 with `Retry-After`."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

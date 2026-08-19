@@ -1,0 +1,79 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Strand AI Platform Jobs Samples API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Samples",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Set sample expiration",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://app.strandai.com/api/v1/samples/:id/expiration",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set a sample to expire on a specific date, set it to never expire, or clear any custom expiration and follow the org default. Caller must be the sample's creator, an org owner/admin, or a Strand admin."
+        },
+        {
+          "info": {
+            "name": "Set sample expiration (bulk)",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://app.strandai.com/api/v1/samples/expiration",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "All-or-nothing: if any sample fails the permission gate the whole call is rejected before any writes. Max 500 IDs per call."
+        },
+        {
+          "info": {
+            "name": "Restore a sample from Trash",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.strandai.com/api/v1/samples/:id/restore",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Available within the 7-day Trash window. Brings the sample back to the active list and extends its expiration so it isn't immediately re-trashed. Same permission gate as the expiration endpoints."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

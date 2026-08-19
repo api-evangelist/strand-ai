@@ -2,11 +2,10 @@ generated: '2026-07-21'
 method: derived
 status: candidate
 source: openapi/strand-ai-openapi-original.json
-note: >-
-  Strand AI publishes no official hosted/remote MCP server for the Strand Platform API (the org's
-  MCP repos — paper-intelligence, slack-notifier-mcp, lambda-cli — are internal developer tooling,
-  not a wrapper for this API). Below is a CANDIDATE tool list derived one-to-one from the OpenAPI
-  operations, offered as a starting point for an agent-native surface.
+note: Strand AI publishes no official hosted/remote MCP server for the Strand Platform API (the org's
+  MCP repos — paper-intelligence, slack-notifier-mcp, lambda-cli — are internal developer tooling, not
+  a wrapper for this API). Below is a CANDIDATE tool list derived one-to-one from the OpenAPI operations,
+  offered as a starting point for an agent-native surface.
 server:
   name: strand-ai
   transport: http
@@ -44,3 +43,9 @@ tools:
 - name: restore_sample
   description: Restore a sample from Trash within the 7-day recovery window
   source_operation: openapi/strand-ai-openapi-original.json#restoreSample
+deployment:
+  mode: none
+  verified: derived
+  tools: 11
+  checked: '2026-08-12'
+  source: catalog MCP census
