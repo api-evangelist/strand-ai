@@ -43,6 +43,17 @@ modified: '2026-07-21'
 tags:
 - Company
 - Artificial Intelligence
+- Machine-Learning
+- Life Sciences
+- Spatial Biology
+- Bioinformatics
+- Drug Discovery
+- Foundation Models
+- Digital Pathology
+- Healthcare
+tags_raw:
+- Company
+- Artificial Intelligence
 - Machine Learning
 - Life Sciences
 - Spatial Biology
@@ -58,6 +69,8 @@ apis:
   humanURL: https://docs.strandai.com/api/overview
   baseURL: https://app.strandai.com/api/v1
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
