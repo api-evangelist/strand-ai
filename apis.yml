@@ -18,6 +18,18 @@ description: >-
   (strandai) clients are published. Outputs are for research and hypothesis generation, not
   clinical use.
 url: https://raw.githubusercontent.com/api-evangelist/strand-ai/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
