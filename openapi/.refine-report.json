@@ -1,10 +1,7 @@
 {
   "provider": "strand-ai",
   "sources": [
-    "strand-ai-jobs-api-openapi.yml",
-    "strand-ai-predict-api-openapi.yml",
-    "strand-ai-samples-api-openapi.yml",
-    "strand-ai-uploads-api-openapi.yml"
+    "_original/strand-ai-openapi-original.json"
   ],
   "outputs": [
     "strand-ai-jobs-api-openapi.yml",
@@ -15,6 +12,19 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "strand-ai-openapi-original.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "strand-ai-openapi-original.json: declared missing tag: Jobs",
+    "strand-ai-openapi-original.json: declared missing tag: Predict",
+    "strand-ai-openapi-original.json: declared missing tag: Samples",
+    "strand-ai-openapi-original.json: declared missing tag: Uploads",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "strand-ai-jobs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "strand-ai-predict-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "strand-ai-samples-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "strand-ai-uploads-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

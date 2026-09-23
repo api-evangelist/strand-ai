@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Strand AI Platform Jobs Predict API
+  title: Strand AI Platform Predict API
   version: v1
   description: 'REST surface for uploading WSIs, submitting Lattice inference jobs, and streaming results. All endpoints require an `Authorization: Bearer sk-strand-...` header. Generate keys at `/settings/api-keys`.'
 servers:
@@ -111,35 +111,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Submission:
-      type: object
-      required:
-      - jobId
-      - reservedCredits
-      - status
-      properties:
-        jobId:
-          type: string
-          format: uuid
-        reservedCredits:
-          type: integer
-        status:
-          type: string
-          enum:
-          - queued
-    Error:
-      type: object
-      required:
-      - error
-      - message
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-        required:
-          type: integer
-          nullable: true
     Estimate:
       type: object
       required:
@@ -158,6 +129,35 @@ components:
           type: integer
         orgPending:
           type: integer
+    Error:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        required:
+          type: integer
+          nullable: true
+    Submission:
+      type: object
+      required:
+      - jobId
+      - reservedCredits
+      - status
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        reservedCredits:
+          type: integer
+        status:
+          type: string
+          enum:
+          - queued
   securitySchemes:
     ApiKey:
       type: http
