@@ -111,6 +111,22 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Submission:
+      type: object
+      required:
+      - jobId
+      - reservedCredits
+      - status
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        reservedCredits:
+          type: integer
+        status:
+          type: string
+          enum:
+          - queued
     Estimate:
       type: object
       required:
@@ -142,22 +158,6 @@ components:
         required:
           type: integer
           nullable: true
-    Submission:
-      type: object
-      required:
-      - jobId
-      - reservedCredits
-      - status
-      properties:
-        jobId:
-          type: string
-          format: uuid
-        reservedCredits:
-          type: integer
-        status:
-          type: string
-          enum:
-          - queued
   securitySchemes:
     ApiKey:
       type: http

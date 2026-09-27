@@ -130,6 +130,19 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Results:
+      type: object
+      required:
+      - resultUrl
+      - expiresAt
+      properties:
+        resultUrl:
+          type: string
+        resultBasePath:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
     Error:
       type: object
       required:
@@ -200,19 +213,6 @@ components:
           nullable: true
         resultsAvailable:
           type: boolean
-    Results:
-      type: object
-      required:
-      - resultUrl
-      - expiresAt
-      properties:
-        resultUrl:
-          type: string
-        resultBasePath:
-          type: string
-        expiresAt:
-          type: string
-          format: date-time
   securitySchemes:
     ApiKey:
       type: http

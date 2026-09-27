@@ -180,19 +180,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      - message
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-        required:
-          type: integer
-          nullable: true
     Sample:
       type: object
       required:
@@ -237,6 +224,19 @@ components:
         reason:
           type: string
           maxLength: 500
+    Error:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        required:
+          type: integer
+          nullable: true
   securitySchemes:
     ApiKey:
       type: http

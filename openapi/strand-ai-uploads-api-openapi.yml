@@ -80,19 +80,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      - message
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-        required:
-          type: integer
-          nullable: true
     UploadComplete:
       type: object
       required:
@@ -117,6 +104,19 @@ components:
           enum:
           - sharp
           - stub
+    Error:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        required:
+          type: integer
+          nullable: true
     UploadCreated:
       type: object
       required:
