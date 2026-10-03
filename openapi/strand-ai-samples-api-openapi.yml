@@ -209,6 +209,19 @@ components:
         batchId:
           type: string
           format: uuid
+    Error:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        required:
+          type: integer
+          nullable: true
     ExpirationUpdate:
       type: object
       description: 'Provide exactly one of `expiresAt`, `neverExpire: true`, or `useOrgDefault: true`. `neverExpire: true` is sugar for `expiresAt: null` (custom). `useOrgDefault: true` clears the custom expiration and follows the org''s default policy.'
@@ -224,19 +237,6 @@ components:
         reason:
           type: string
           maxLength: 500
-    Error:
-      type: object
-      required:
-      - error
-      - message
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-        required:
-          type: integer
-          nullable: true
   securitySchemes:
     ApiKey:
       type: http
