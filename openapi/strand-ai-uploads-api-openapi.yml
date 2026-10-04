@@ -80,6 +80,30 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    UploadComplete:
+      type: object
+      required:
+      - uploadId
+      - status
+      - widthPx
+      - heightPx
+      properties:
+        uploadId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - ready
+        widthPx:
+          type: integer
+        heightPx:
+          type: integer
+        dimensionsSource:
+          type: string
+          enum:
+          - sharp
+          - stub
     UploadCreated:
       type: object
       required:
@@ -110,30 +134,6 @@ components:
         required:
           type: integer
           nullable: true
-    UploadComplete:
-      type: object
-      required:
-      - uploadId
-      - status
-      - widthPx
-      - heightPx
-      properties:
-        uploadId:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum:
-          - ready
-        widthPx:
-          type: integer
-        heightPx:
-          type: integer
-        dimensionsSource:
-          type: string
-          enum:
-          - sharp
-          - stub
   securitySchemes:
     ApiKey:
       type: http

@@ -127,19 +127,6 @@ components:
           type: string
           enum:
           - queued
-    Error:
-      type: object
-      required:
-      - error
-      - message
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-        required:
-          type: integer
-          nullable: true
     Estimate:
       type: object
       required:
@@ -158,6 +145,19 @@ components:
           type: integer
         orgPending:
           type: integer
+    Error:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        required:
+          type: integer
+          nullable: true
   securitySchemes:
     ApiKey:
       type: http

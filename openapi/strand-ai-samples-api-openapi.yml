@@ -180,6 +180,21 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    ExpirationUpdate:
+      type: object
+      description: 'Provide exactly one of `expiresAt`, `neverExpire: true`, or `useOrgDefault: true`. `neverExpire: true` is sugar for `expiresAt: null` (custom). `useOrgDefault: true` clears the custom expiration and follows the org''s default policy.'
+      properties:
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        neverExpire:
+          type: boolean
+        useOrgDefault:
+          type: boolean
+        reason:
+          type: string
+          maxLength: 500
     Sample:
       type: object
       required:
@@ -222,21 +237,6 @@ components:
         required:
           type: integer
           nullable: true
-    ExpirationUpdate:
-      type: object
-      description: 'Provide exactly one of `expiresAt`, `neverExpire: true`, or `useOrgDefault: true`. `neverExpire: true` is sugar for `expiresAt: null` (custom). `useOrgDefault: true` clears the custom expiration and follows the org''s default policy.'
-      properties:
-        expiresAt:
-          type: string
-          format: date-time
-          nullable: true
-        neverExpire:
-          type: boolean
-        useOrgDefault:
-          type: boolean
-        reason:
-          type: string
-          maxLength: 500
   securitySchemes:
     ApiKey:
       type: http
