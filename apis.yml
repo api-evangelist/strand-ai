@@ -52,7 +52,7 @@ x-tier: enriched
 x-tier-reason: has-public-api
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-10-06'
 tags:
 - Company
 - Artificial Intelligence
@@ -141,6 +141,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- url: https://strandai.com/feed.xml
+  type: BlogRSS
 - type: DeveloperPortal
   url: https://docs.strandai.com
 - type: Documentation
