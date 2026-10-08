@@ -1,0 +1,22 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-07'
+method: searched
+source: https://docs.strandai.com/pricing
+sources:
+- https://docs.strandai.com/pricing
+provenance:
+  tool: all/0-working/economics/harvest_pricing.py
+  run: 20261007T104522
+  grounding: every price_text was found verbatim in the fetched page text
+audience: developer-api
+pricing_basis: per-call
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-10-07'
+published: false
+note: No numeric price is published on the pricing page; Page explains credit-based billing (1 credit
+  = 1 retained tissue model-grid position × 1 marker) but states no monetary price; credits sold in prepaid
+  tiers via email to support, no self-serve top-up. No numeric prices published.
+plan_count: 0
+plans: []
